@@ -1,0 +1,9 @@
+.images {
+  display: block;
+  margin: 1rem auto;
+  padding: 0;
+  list-style: none;
+}
+.images-body {
+  width: 90%;
+}
