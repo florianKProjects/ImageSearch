@@ -2,6 +2,8 @@ li {
   display: inline-block;
   margin: 1rem;
   overflow: hidden;
+  border-radius: 15px;
+
   box-shadow: 0 0 3rem -1rem rgba(0, 0, 0, 0.5);
   transition: transform 0.1s ease-in-out, box-shadow 0.1s;
 }

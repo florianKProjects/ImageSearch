@@ -68,6 +68,7 @@ const ImagesCards = (props) => {
           value={searchMovie}
           onChange={seachHandler}
         ></input>
+        <div style={{ fontSize: "15px" }}>minimum 3 letters to search</div>
       </div>
       <hr className="separator" />
       <div className="images-body">
