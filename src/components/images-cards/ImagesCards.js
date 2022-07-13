@@ -10,9 +10,10 @@ import { TailSpin } from "react-loader-spinner";
 import "./ImagesCards.css";
 
 const ImagesCards = (props) => {
-  const [searchMovie, setSearchMovie] = useState("");
+  const [searchMovie, setSearchMovie] = useState(""); //search text
 
   const seachHandler = (e) => {
+    // search hanlder
     setSearchMovie(e.target.value);
     if (e.target.value.length >= 3) {
       props.resetState();
@@ -20,7 +21,7 @@ const ImagesCards = (props) => {
     }
   };
 
-  const observer = useRef();
+  const observer = useRef(); // infinite-scroll call back last com
   const lastBookElementRef = useCallback(
     (node) => {
       if (props.loading) return;
