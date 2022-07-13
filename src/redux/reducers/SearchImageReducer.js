@@ -19,11 +19,11 @@ export default (state = initialState, action) => {
         loading: true,
       };
     case IMAGE_SEARCH_ACTIONS.IMAGE_SEARCH_SUCCESS:
-      debugger;
+      let images = state.data.photo.concat(action.payload.photos.photo);
       return Object.assign({}, state, {
         loading: false,
         error: false,
-        data: action.payload.photos,
+        data: { ...action.payload.photos, photo: images },
       });
     case IMAGE_SEARCH_ACTIONS.MOVIE_SEARCH_ERROR:
       return {

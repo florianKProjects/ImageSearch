@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import "./ImageCard.css";
-const ImageCard = ({ _ref, url, imageId }) => {
+const ImageCard = ({ _ref = undefined, url, imageId }) => {
   return (
-    <li className="image-card" ref={_ref}>
+    <li className="image-card" ref={_ref} key={imageId}>
       <img key={imageId} src={url} loading="lazy"></img>
     </li>
   );

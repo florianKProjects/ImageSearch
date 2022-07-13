@@ -1,33 +1,35 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, Suspense } from "react";
 import ImageCard from "../image-card/ImageCard";
 import { connect } from "react-redux/es/exports";
+import {
+  searchImages,
+  resetState,
+} from "./../../redux/actions/SearchImageAction";
+import { TailSpin } from "react-loader-spinner";
 
 import "./ImagesCards.css";
 
 const ImagesCards = (props) => {
-  const [images, setImages] = useState([]);
-  useEffect(() => {
-    if (images.length == 0) {
-      setImages((images) => images.concat(props.data.photo));
+  const [searchMovie, setSearchMovie] = useState("");
+
+  const seachHandler = (e) => {
+    setSearchMovie(e.target.value);
+    if (e.target.value.length >= 3) {
+      props.resetState();
+      props.searchImages(e.target.value, 1);
     }
-  }, [props.data.loading]);
+  };
 
   const observer = useRef();
   const lastBookElementRef = useCallback(
     (node) => {
-      debugger;
       if (props.loading) return;
-      if (images.length != 0) {
-        setImages((images) => images.concat(props.data.photo));
-      } else {
-        setImages((images) => (images = props.data.photo));
-      }
+      if (props.data.page >= props.data.pages) return;
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
-          debugger;
           props.data.page = props.data.page + 1;
-          props.setImagePage(props.data.page);
+          props.searchImages(searchMovie, props.data.page);
         }
       });
       if (node) observer.current.observe(node);
@@ -35,38 +37,55 @@ const ImagesCards = (props) => {
     [props.loading]
   );
 
+  const createImagesCards = () => {
+    return props.data.photo.map((image, index) => {
+      if (props.data.photo.length === index + 1) {
+        return (
+          <ImageCard
+            _ref={lastBookElementRef}
+            url={`https://live.staticflickr.com/${image.server}/${image.id}_${image.secret}.jpg`}
+            index={index}
+          ></ImageCard>
+        );
+      } else {
+        return (
+          <ImageCard
+            url={`https://live.staticflickr.com/${image.server}/${image.id}_${image.secret}.jpg`}
+            index={index}
+          ></ImageCard>
+        );
+      }
+    });
+  };
+
   return (
-    <div className="images-body">
-      <ul className="images">
-        {!props.loading ? (
-          images.map((image, index) => {
-            if (images.length === index + 1) {
-              debugger;
-              return (
-                <ImageCard
-                  _ref={lastBookElementRef}
-                  url={`https://live.staticflickr.com/${image.server}/${image.id}_${image.secret}.jpg`}
-                  imageId={image.id}
-                ></ImageCard>
-              );
-            } else {
-              return (
-                <ImageCard
-                  url={`https://live.staticflickr.com/${image.server}/${image.id}_${image.secret}.jpg`}
-                  imageId={image.id}
-                ></ImageCard>
-              );
-            }
-          })
+    <>
+      <div className="search-body">
+        <input
+          className="search-bar"
+          type="text"
+          value={searchMovie}
+          onChange={seachHandler}
+        ></input>
+      </div>
+      <hr className="separator" />
+      <div className="images-body">
+        <Suspense fallback={<div>Loading</div>}>
+          <ul className="images">{createImagesCards()}</ul>
+        </Suspense>
+        {props.loading ? (
+          <TailSpin height="100" width="100" color="grey" ariaLabel="loading" />
         ) : (
-          <div></div>
+          <></>
         )}
-      </ul>
-    </div>
+      </div>
+    </>
   );
 };
 const mapStateToImages = (states) => {
   return { ...states.imagesSeachRes };
 };
 
-export default connect(mapStateToImages, {})(ImagesCards);
+export default connect(mapStateToImages, { searchImages, resetState })(
+  ImagesCards
+);
