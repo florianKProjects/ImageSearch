@@ -16,16 +16,17 @@ const ImagesCards = (props) => {
     // search hanlder
     setSearchMovie(e.target.value);
     if (e.target.value.length >= 3) {
-      props.resetState();
       props.searchImages(e.target.value, 1);
     }
+    props.resetState();
   };
 
   const observer = useRef(); // infinite-scroll call back last com
   const lastBookElementRef = useCallback(
     (node) => {
       if (props.loading) return;
-      if (props.data.page >= props.data.pages) return;
+      if (props.data.page > props.data.pages && props.data.photo.length != 0)
+        return;
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
@@ -46,6 +47,7 @@ const ImagesCards = (props) => {
             _ref={lastBookElementRef}
             url={`https://live.staticflickr.com/${image.server}/${image.id}_${image.secret}.jpg`}
             index={index}
+            key={index}
           ></ImageCard>
         );
       } else {
@@ -53,6 +55,7 @@ const ImagesCards = (props) => {
           <ImageCard
             url={`https://live.staticflickr.com/${image.server}/${image.id}_${image.secret}.jpg`}
             index={index}
+            key={index}
           ></ImageCard>
         );
       }
@@ -81,6 +84,11 @@ const ImagesCards = (props) => {
           <></>
         )}
       </div>
+      {props.data.page >= props.data.pages && props.data.photo.length != 0 ? (
+        <div style={{ fontSize: "25px" }}>No more results</div>
+      ) : (
+        <></>
+      )}
     </>
   );
 };
