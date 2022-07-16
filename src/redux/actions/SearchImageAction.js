@@ -12,7 +12,7 @@ export const searchImages = (searchWorkd, page) => {
     dispatch({ type: request() });
     await imagesApiCallService._searchImages(searchWorkd, page).then(
       (data) => {
-        dispatch(success(data));
+        dispatch(success(data, searchWorkd));
       },
       (error) => {
         dispatch(failure(error.toString()));
@@ -22,8 +22,12 @@ export const searchImages = (searchWorkd, page) => {
   function request() {
     return IMAGE_SEARCH_ACTIONS.IMAGE_SEARCH;
   }
-  function success(data) {
-    return { type: IMAGE_SEARCH_ACTIONS.IMAGE_SEARCH_SUCCESS, payload: data };
+  function success(data, searchWorkd) {
+    return {
+      type: IMAGE_SEARCH_ACTIONS.IMAGE_SEARCH_SUCCESS,
+      payload: data,
+      search: searchWorkd,
+    };
   }
   function failure(error) {
     return { type: IMAGE_SEARCH_ACTIONS.MOVIE_SEARCH_ERROR, error };

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, Suspense } from "react";
+import React, { useRef, useCallback, Suspense } from "react";
 import ImageCard from "../image-card/ImageCard";
 import { connect } from "react-redux/es/exports";
 import {
@@ -6,32 +6,19 @@ import {
   resetState,
 } from "./../../redux/actions/SearchImageAction";
 import { TailSpin } from "react-loader-spinner";
-
 import "./ImagesCards.css";
 
 const ImagesCards = (props) => {
-  const [searchMovie, setSearchMovie] = useState(""); //search text
-
-  const seachHandler = (e) => {
-    // search hanlder
-    setSearchMovie(e.target.value);
-    if (e.target.value.length >= 3) {
-      props.searchImages(e.target.value, 1);
-    }
-    props.resetState();
-  };
-
   const observer = useRef(); // infinite-scroll call back last com
-  const lastBookElementRef = useCallback(
+  const lastImageElementRef = useCallback(
     (node) => {
       if (props.loading) return;
-      if (props.data.page > props.data.pages && props.data.photo.length != 0)
-        return;
+      if (props.data.page === props.data.pages) return;
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
           props.data.page = props.data.page + 1;
-          props.searchImages(searchMovie, props.data.page);
+          props.searchImages(props.imageSearchWord, props.data.page);
         }
       });
       if (node) observer.current.observe(node);
@@ -44,9 +31,10 @@ const ImagesCards = (props) => {
       if (props.data.photo.length === index + 1) {
         return (
           <ImageCard
-            _ref={lastBookElementRef}
+            _ref={lastImageElementRef}
             url={`https://live.staticflickr.com/${image.server}/${image.id}_${image.secret}.jpg`}
             index={index}
+            description={image.title}
             key={index}
           ></ImageCard>
         );
@@ -64,16 +52,6 @@ const ImagesCards = (props) => {
 
   return (
     <>
-      <div className="search-body">
-        <input
-          className="search-bar"
-          type="text"
-          value={searchMovie}
-          onChange={seachHandler}
-        ></input>
-        <div style={{ fontSize: "15px" }}>minimum 3 letters to search</div>
-      </div>
-      <hr className="separator" />
       <div className="images-body">
         <Suspense fallback={<div>Loading</div>}>
           <ul className="images">{createImagesCards()}</ul>
@@ -84,7 +62,7 @@ const ImagesCards = (props) => {
           <></>
         )}
       </div>
-      {props.data.page >= props.data.pages && props.data.photo.length != 0 ? (
+      {props.data.page === props.data.pages ? (
         <div style={{ fontSize: "25px" }}>No more results</div>
       ) : (
         <></>

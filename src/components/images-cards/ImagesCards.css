@@ -1,12 +1,13 @@
 .images {
-  display: block;
   margin: 1rem auto;
   padding: 0;
   list-style: none;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  zoom: 1;
 }
 .images-body {
-  width: 90%;
-}
-.search-body {
-  margin: 10px;
+  width: 100%;
+  text-align: center;
 }

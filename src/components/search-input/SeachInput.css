@@ -1,0 +1,5 @@
+.search-body {
+  margin: 10px;
+  display: flex;
+  gap: 3px;
+}
